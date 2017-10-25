@@ -44,11 +44,20 @@ def build_part1_RNN(window_size):
 def cleaned_text(text):
     punctuation = ['!', ',', '.', ':', ';', '?']
     valid_chars = list(string.ascii_lowercase)
-    valid_chars.append(punctuation)
-    for c in text:
-        if c not in valid_chars:
-            text = text.replace(c,' ')
+    valid_chars += punctuation
+    valid_chars += [' ']
 
+    # find invalid characters in the text
+    unique_chars = set(text)
+    invalid_chars = []
+    for c in unique_chars:
+        if c not in valid_chars:
+            invalid_chars.append(c)
+
+    # replace the invalid characters with empty spaces
+    for c in invalid_chars:
+        text = text.replace(c, '')
+    
     return text
 
 ### TODO: fill out the function below that transforms the input text and window-size into a set of input/output pairs for use with our RNN model
@@ -57,7 +66,7 @@ def window_transform_text(text, window_size, step_size):
     inputs = []
     outputs = []
     text_list = list(text)
-    length = len(text_list)-window_size - step_size
+    length = len(text_list)-window_size
     for i in range(0, length, step_size):
         inputs.append(''.join(text_list[i:i + window_size]))
         outputs.append(text_list[i + window_size])
